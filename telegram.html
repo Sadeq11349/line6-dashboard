@@ -1,558 +1,572 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PCL 6 - Group Messages</title>
+<title>PCL 6 — Messages</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-  :root {
-    --bg: #0d1117;
-    --bg2: #161b22;
-    --bg3: #1c2128;
-    --border: #30363d;
-    --accent: #2ea043;
-    --accent2: #1f6feb;
-    --text: #e6edf3;
-    --text2: #8b949e;
-    --text3: #6e7681;
-    --card: #161b22;
-    --online: #3fb950;
-  }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --white: #ffffff;
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --border2: #edf2f7;
+  --text: #1a202c;
+  --text2: #4a5568;
+  --text3: #a0aec0;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --green: #16a34a;
+  --green-light: #f0fdf4;
+  --red: #dc2626;
+  --yellow: #d97706;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow2: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
 
-  /* Header */
-  .header {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+/* ─── Header ─── */
+.header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow);
+}
 
-  .header-icon {
-    width: 44px;
-    height: 44px;
-    background: linear-gradient(135deg, #0088cc, #00c6ff);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
+.header-logo {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #0088cc 0%, #00b4ff 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
 
-  .header-info h1 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.3px;
-  }
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
 
-  .header-info .subtitle {
-    font-size: 12px;
-    color: var(--text2);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 2px;
-  }
+.header-sub {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 
-  .online-dot {
-    width: 7px;
-    height: 7px;
-    background: var(--online);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(0.8); }
-  }
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
 
-  .header-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-  .msg-count {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--text2);
-  }
+.badge {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
 
-  .refresh-btn {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 12px;
-    color: var(--text2);
-    font-size: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
-  }
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text2);
+  font-size: 13px;
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  transition: all 0.15s;
+  cursor: pointer;
+}
 
-  .refresh-btn:hover {
-    border-color: var(--accent2);
-    color: var(--text);
-    background: rgba(31, 111, 235, 0.1);
-  }
+.back-btn:hover {
+  background: var(--bg);
+  color: var(--text);
+}
 
-  .refresh-icon {
-    transition: transform 0.5s;
-  }
+/* ─── Status bar ─── */
+.status-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border2);
+  padding: 6px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text3);
+}
 
-  .refresh-icon.spinning {
-    transform: rotate(360deg);
-  }
+.status-left { display: flex; align-items: center; gap: 12px; }
 
-  /* Status bar */
-  .status-bar {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    padding: 8px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--text3);
-    font-family: 'JetBrains Mono', monospace;
-  }
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
 
-  .status-left { display: flex; align-items: center; gap: 16px; }
+.status-pill.ok { background: var(--green-light); color: var(--green); }
+.status-pill.err { background: #fef2f2; color: var(--red); }
+.status-pill.loading { background: #fffbeb; color: var(--yellow); }
 
-  .status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
+.status-pill-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
 
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--online);
-  }
+/* ─── Main ─── */
+.main {
+  max-width: 760px;
+  margin: 24px auto;
+  padding: 0 16px 40px;
+}
 
-  .status-dot.error { background: #f85149; }
-  .status-dot.loading { background: #d29922; animation: pulse 1s infinite; }
+/* ─── Message card ─── */
+.msg-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 6px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.15s, border-color 0.15s;
+  animation: fadeSlide 0.25s ease;
+}
 
-  /* Main content */
-  .main {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 24px 20px;
-  }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  /* Messages container */
-  .messages-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
+.msg-card:hover {
+  box-shadow: var(--shadow2);
+  border-color: #cbd5e0;
+}
 
-  /* Message card */
-  .message-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    gap: 12px;
-    transition: all 0.2s;
-    animation: slideIn 0.3s ease;
-  }
+.msg-card.is-new {
+  border-left: 3px solid var(--accent);
+}
 
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+/* Avatar */
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
 
-  .message-card:hover {
-    border-color: #444c56;
-    background: var(--bg3);
-  }
+/* Content */
+.msg-body { flex: 1; min-width: 0; }
 
-  .message-card.new {
-    border-color: rgba(46, 160, 67, 0.4);
-    background: rgba(46, 160, 67, 0.05);
-  }
+.msg-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
 
-  /* Avatar */
-  .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 600;
-    flex-shrink: 0;
-    color: #fff;
-  }
+.msg-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
 
-  /* Message content */
-  .msg-content { flex: 1; min-width: 0; }
+.msg-handle {
+  font-size: 11px;
+  color: var(--text3);
+}
 
-  .msg-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 5px;
-  }
+.msg-time {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
 
-  .msg-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-  }
+.msg-type-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
 
-  .msg-username {
-    font-size: 11px;
-    color: var(--text3);
-    font-family: 'JetBrains Mono', monospace;
-  }
+.type-photo { background: #eff6ff; color: #2563eb; }
+.type-video { background: #f0fdf4; color: #16a34a; }
+.type-audio { background: #fdf4ff; color: #9333ea; }
+.type-voice { background: #fdf4ff; color: #9333ea; }
+.type-document { background: #fffbeb; color: #d97706; }
+.type-sticker { background: #fff7ed; color: #ea580c; }
 
-  .msg-time {
-    margin-left: auto;
-    font-size: 11px;
-    color: var(--text3);
-    font-family: 'JetBrains Mono', monospace;
-    flex-shrink: 0;
-  }
+.msg-text {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.6;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
 
-  .msg-text {
-    font-size: 14px;
-    color: var(--text2);
-    line-height: 1.6;
-    word-break: break-word;
-    white-space: pre-wrap;
-  }
+/* Media */
+.msg-media { margin-top: 8px; }
 
-  /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--text3);
-  }
+.msg-media img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: block;
+}
 
-  .empty-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-    opacity: 0.5;
-  }
+.msg-media img:hover { opacity: 0.9; }
 
-  .empty-title {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text2);
-    margin-bottom: 8px;
-  }
+.media-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text2);
+  text-decoration: none;
+  transition: background 0.15s;
+}
 
-  .empty-desc {
-    font-size: 13px;
-    line-height: 1.6;
-  }
+.media-placeholder:hover { background: var(--border2); }
 
-  /* Loading state */
-  .loading-state {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
+.media-icon { font-size: 20px; }
 
-  .skeleton {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    gap: 12px;
-    animation: shimmer 1.5s infinite;
-  }
+audio {
+  width: 100%;
+  margin-top: 4px;
+  border-radius: 8px;
+}
 
-  @keyframes shimmer {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-  }
+/* Date separator */
+.date-sep {
+  text-align: center;
+  position: relative;
+  margin: 16px 0 10px;
+}
 
-  .skeleton-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--bg3);
-    flex-shrink: 0;
-  }
+.date-sep::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0; right: 0;
+  height: 1px;
+  background: var(--border);
+}
 
-  .skeleton-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.date-sep span {
+  position: relative;
+  background: var(--bg);
+  padding: 0 12px;
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 500;
+}
 
-  .skeleton-line {
-    height: 10px;
-    border-radius: 4px;
-    background: var(--bg3);
-  }
+/* Empty */
+.empty {
+  text-align: center;
+  padding: 80px 20px;
+}
 
-  /* New message toast */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--accent);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 24px;
-    font-size: 13px;
-    font-weight: 500;
-    transition: transform 0.3s ease;
-    z-index: 999;
-    white-space: nowrap;
-  }
+.empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+.empty-title { font-size: 15px; font-weight: 600; color: var(--text2); margin-bottom: 6px; }
+.empty-desc { font-size: 13px; color: var(--text3); }
 
-  .toast.show {
-    transform: translateX(-50%) translateY(0);
-  }
+/* Skeleton */
+.skeleton-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 6px;
+  animation: pulse 1.5s infinite;
+}
 
-  /* Back link */
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--text3);
-    font-size: 12px;
-    text-decoration: none;
-    padding: 0 24px 0;
-    margin-top: 12px;
-    transition: color 0.2s;
-  }
+@keyframes pulse {
+  0%,100% { opacity: 0.8; }
+  50% { opacity: 0.4; }
+}
 
-  .back-link:hover { color: var(--text2); }
+.sk-avatar { width:38px; height:38px; border-radius:50%; background:var(--border); flex-shrink:0; }
+.sk-body { flex:1; display:flex; flex-direction:column; gap:8px; }
+.sk-line { height:10px; border-radius:4px; background:var(--border); }
 
-  /* Separator */
-  .date-separator {
-    text-align: center;
-    margin: 12px 0;
-    position: relative;
-  }
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 999;
+  white-space: nowrap;
+  pointer-events: none;
+}
 
-  .date-separator span {
-    background: var(--bg);
-    padding: 0 12px;
-    font-size: 11px;
-    color: var(--text3);
-    font-family: 'JetBrains Mono', monospace;
-    position: relative;
-    z-index: 1;
-  }
+.toast.show { transform: translateX(-50%) translateY(0); }
 
-  .date-separator::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--border);
-  }
+/* Image modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
 
-  @media (max-width: 600px) {
-    .header { padding: 12px 16px; }
-    .main { padding: 16px 12px; }
-    .status-bar { padding: 6px 16px; }
-    .msg-time { display: none; }
-  }
+.modal.open { display: flex; }
+.modal img { max-width: 92vw; max-height: 88vh; border-radius: 8px; }
+
+@media(max-width:600px) {
+  .header { padding: 0 16px; height: 56px; }
+  .main { padding: 0 10px 40px; margin-top: 16px; }
+  .msg-time { display: none; }
+}
 </style>
 </head>
 <body>
 
 <!-- Header -->
 <div class="header">
-  <div class="header-icon">✈️</div>
-  <div class="header-info">
-    <h1>PCL 6</h1>
-    <div class="subtitle">
-      <span class="online-dot"></span>
-      <span>Live Group Messages</span>
+  <div class="header-logo">✈️</div>
+  <div>
+    <div class="header-title">PCL 6</div>
+    <div class="header-sub">
+      <span class="live-dot"></span>
+      Live Group Messages
     </div>
   </div>
   <div class="header-right">
-    <span class="msg-count" id="msg-count">0 messages</span>
-    <button class="refresh-btn" onclick="loadMessages(true)">
-      <span class="refresh-icon" id="refresh-icon">↻</span>
-      Refresh
-    </button>
+    <span class="badge" id="msg-count">—</span>
+    <a href="index.html" class="back-btn">← Dashboard</a>
   </div>
 </div>
 
 <!-- Status bar -->
 <div class="status-bar">
   <div class="status-left">
-    <div class="status-indicator">
-      <div class="status-dot" id="status-dot"></div>
+    <div class="status-pill ok" id="status-pill">
+      <div class="status-pill-dot"></div>
       <span id="status-text">Connected</span>
     </div>
     <span id="last-update">—</span>
   </div>
-  <span>Auto-refresh every 10s</span>
+  <span id="refresh-info">Smart refresh active</span>
 </div>
 
-<!-- Back link -->
-<a href="index.html" class="back-link">← Back to Dashboard</a>
-
 <!-- Main -->
-<div class="main">
-  <div id="messages-wrapper">
-    <!-- Loading skeleton -->
-    <div class="loading-state" id="loading">
-      <div class="skeleton" style="animation-delay:0s">
-        <div class="skeleton-avatar"></div>
-        <div class="skeleton-content">
-          <div class="skeleton-line" style="width:40%"></div>
-          <div class="skeleton-line" style="width:80%"></div>
-        </div>
-      </div>
-      <div class="skeleton" style="animation-delay:0.2s">
-        <div class="skeleton-avatar"></div>
-        <div class="skeleton-content">
-          <div class="skeleton-line" style="width:30%"></div>
-          <div class="skeleton-line" style="width:65%"></div>
-        </div>
-      </div>
-      <div class="skeleton" style="animation-delay:0.4s">
-        <div class="skeleton-avatar"></div>
-        <div class="skeleton-content">
-          <div class="skeleton-line" style="width:50%"></div>
-          <div class="skeleton-line" style="width:75%"></div>
-        </div>
-      </div>
-    </div>
-    <div class="messages-container" id="messages-list" style="display:none"></div>
+<div class="main" id="main">
+  <!-- Skeletons -->
+  <div id="skeletons">
+    <div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-body"><div class="sk-line" style="width:35%"></div><div class="sk-line" style="width:70%"></div></div></div>
+    <div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-body"><div class="sk-line" style="width:45%"></div><div class="sk-line" style="width:55%"></div></div></div>
+    <div class="skeleton-card"><div class="sk-avatar"></div><div class="sk-body"><div class="sk-line" style="width:30%"></div><div class="sk-line" style="width:80%"></div></div></div>
   </div>
+  <div id="msg-list" style="display:none"></div>
 </div>
 
 <!-- Toast -->
-<div class="toast" id="toast">🔔 New message received</div>
+<div class="toast" id="toast"></div>
+
+<!-- Image modal -->
+<div class="modal" id="modal" onclick="closeModal()">
+  <img id="modal-img" src="" alt="">
+</div>
 
 <script>
-const WORKER_URL = "https://telegram-bot.sadeq916.workers.dev/messages";
+const WORKER = "https://telegram-bot.sadeq916.workers.dev";
+const COLORS = ["#2563eb","#16a34a","#d97706","#dc2626","#9333ea","#0891b2","#db2777","#65a30d"];
 
-const AVATAR_COLORS = [
-  "#2ea043","#1f6feb","#d29922","#f85149",
-  "#a371f7","#fd7e14","#20c997","#e83e8c"
-];
-
-let allMessages = [];
+let allMsgs   = [];
 let lastCount = 0;
+let lastTs    = 0;
+let pollTimer = null;
 
-function getAvatarColor(name) {
-  let hash = 0;
-  for (let c of name) hash = (hash * 31 + c.charCodeAt(0)) & 0xffffffff;
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+// ─── Helpers ───
+function avatarColor(name) {
+  let h = 0;
+  for (let c of name) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
+  return COLORS[Math.abs(h) % COLORS.length];
 }
 
-function getInitials(name) {
-  return name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+function initials(name) {
+  return name.split(" ").map(w => w[0] || "").join("").toUpperCase().slice(0,2) || "?";
 }
 
-function formatTime(iso) {
-  const d = new Date(iso);
-  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+function fmtTime(iso) {
+  return new Date(iso).toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit" });
 }
 
-function formatDate(iso) {
-  const d = new Date(iso);
-  const today = new Date();
-  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
-
-  if (d.toDateString() === today.toDateString()) return "Today";
-  if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+function fmtDate(iso) {
+  const d = new Date(iso), t = new Date();
+  const y = new Date(t); y.setDate(y.getDate()-1);
+  if (d.toDateString() === t.toDateString()) return "Today";
+  if (d.toDateString() === y.toDateString()) return "Yesterday";
+  return d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
 }
 
-function setStatus(state) {
-  const dot  = document.getElementById("status-dot");
-  const text = document.getElementById("status-text");
-  dot.className = "status-dot" + (state === "error" ? " error" : state === "loading" ? " loading" : "");
-  text.textContent = state === "error" ? "Connection error" : state === "loading" ? "Loading..." : "Connected";
+function setStatus(s) {
+  const pill = document.getElementById("status-pill");
+  const txt  = document.getElementById("status-text");
+  pill.className = "status-pill " + (s==="ok"?"ok":s==="err"?"err":"loading");
+  txt.textContent = s==="ok"?"Connected":s==="err"?"Error":"Updating…";
 }
 
-function showToast(msg) {
+function toast(msg) {
   const t = document.getElementById("toast");
   t.textContent = msg;
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 3000);
 }
 
-function renderMessages(msgs) {
-  const list = document.getElementById("messages-list");
-  document.getElementById("loading").style.display = "none";
-  list.style.display = "flex";
+function openModal(src) {
+  document.getElementById("modal-img").src = src;
+  document.getElementById("modal").classList.add("open");
+}
 
-  if (!msgs || msgs.length === 0) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">💬</div>
-        <div class="empty-title">No messages yet</div>
-        <div class="empty-desc">Messages sent to PCL 6 group will appear here automatically.</div>
-      </div>`;
-    document.getElementById("msg-count").textContent = "0 messages";
+function closeModal() {
+  document.getElementById("modal").classList.remove("open");
+}
+
+// ─── Render ───
+function render(msgs) {
+  document.getElementById("skeletons").style.display = "none";
+  const list = document.getElementById("msg-list");
+  list.style.display = "block";
+
+  document.getElementById("msg-count").textContent =
+    msgs.length + " msg" + (msgs.length !== 1 ? "s" : "");
+
+  if (!msgs.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">💬</div><div class="empty-title">No messages yet</div><div class="empty-desc">Messages from PCL 6 group will appear here in real time.</div></div>`;
     return;
   }
-
-  document.getElementById("msg-count").textContent = msgs.length + " message" + (msgs.length !== 1 ? "s" : "");
 
   let html = "";
   let lastDate = "";
 
   msgs.forEach((msg, idx) => {
-    const dateLabel = formatDate(msg.date);
-    if (dateLabel !== lastDate) {
-      html += `<div class="date-separator"><span>${dateLabel}</span></div>`;
-      lastDate = dateLabel;
+    const dl = fmtDate(msg.date);
+    if (dl !== lastDate) {
+      html += `<div class="date-sep"><span>${dl}</span></div>`;
+      lastDate = dl;
     }
 
-    const color    = getAvatarColor(msg.from);
-    const initials = getInitials(msg.from);
-    const isNew    = idx === 0 && msgs.length > lastCount && lastCount > 0;
-    const username = msg.username ? `@${msg.username}` : "";
-    const text     = msg.text ? msg.text.replace(/</g,"&lt;").replace(/>/g,"&gt;") : "<em style='opacity:0.4'>No text</em>";
+    const col = avatarColor(msg.from);
+    const ini = initials(msg.from);
+    const isNew = idx === 0 && msgs.length > lastCount && lastCount > 0;
+    const handle = msg.username ? `<span class="msg-handle">@${msg.username}</span>` : "";
+    const typeBadge = msg.type && msg.type !== "text"
+      ? `<span class="msg-type-badge type-${msg.type}">${msg.type}</span>` : "";
+
+    // Media
+    let mediaHtml = "";
+    if (msg.mediaUrl) {
+      if (msg.type === "photo") {
+        mediaHtml = `<div class="msg-media"><img src="${msg.mediaUrl}" alt="photo" onclick="openModal('${msg.mediaUrl}')" loading="lazy"></div>`;
+      } else if (msg.type === "audio" || msg.type === "voice") {
+        mediaHtml = `<div class="msg-media"><audio controls src="${msg.mediaUrl}"></audio></div>`;
+      } else if (msg.type === "video") {
+        mediaHtml = `<div class="msg-media"><a class="media-placeholder" href="${msg.mediaUrl}" target="_blank"><span class="media-icon">🎬</span><span>${msg.fileName || "Video"}</span></a></div>`;
+      } else if (msg.type === "document") {
+        mediaHtml = `<div class="msg-media"><a class="media-placeholder" href="${msg.mediaUrl}" target="_blank"><span class="media-icon">📄</span><span>${msg.fileName || "File"}</span></a></div>`;
+      } else if (msg.type === "sticker") {
+        mediaHtml = `<div class="msg-media"><img src="${msg.mediaUrl}" alt="sticker" style="max-height:120px;width:auto;" loading="lazy"></div>`;
+      }
+    }
+
+    const textHtml = msg.text
+      ? `<div class="msg-text">${msg.text.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>` : "";
 
     html += `
-      <div class="message-card ${isNew ? "new" : ""}">
-        <div class="avatar" style="background:${color}">${initials}</div>
-        <div class="msg-content">
-          <div class="msg-header">
+      <div class="msg-card ${isNew ? "is-new" : ""}">
+        <div class="avatar" style="background:${col}">${ini}</div>
+        <div class="msg-body">
+          <div class="msg-meta">
             <span class="msg-name">${msg.from}</span>
-            ${username ? `<span class="msg-username">${username}</span>` : ""}
-            <span class="msg-time">${formatTime(msg.date)}</span>
+            ${handle}
+            ${typeBadge}
+            <span class="msg-time">${fmtTime(msg.date)}</span>
           </div>
-          <div class="msg-text">${text}</div>
+          ${textHtml}
+          ${mediaHtml}
         </div>
       </div>`;
   });
@@ -560,44 +574,57 @@ function renderMessages(msgs) {
   list.innerHTML = html;
 }
 
-async function loadMessages(manual = false) {
-  const icon = document.getElementById("refresh-icon");
-  icon.classList.add("spinning");
-
-  if (!manual) setStatus("loading");
-
+// ─── Smart polling ───
+async function poll() {
   try {
-    const res  = await fetch(WORKER_URL);
-    const msgs = await res.json();
+    const res  = await fetch(`${WORKER}/poll?since=${lastTs}`);
+    const data = await res.json();
 
-    const newCount = msgs.length;
-
-    if (newCount > lastCount && lastCount > 0) {
-      showToast(`🔔 ${newCount - lastCount} new message${newCount - lastCount > 1 ? "s" : ""}`);
+    if (data.updated) {
+      const newCount = data.msgs.length;
+      if (newCount > lastCount && lastCount > 0) {
+        toast(`🔔 ${newCount - lastCount} new message${newCount - lastCount > 1 ? "s" : ""}`);
+      }
+      lastCount = newCount;
+      lastTs    = data.timestamp;
+      allMsgs   = data.msgs;
+      render(allMsgs);
+      setStatus("ok");
+      document.getElementById("last-update").textContent =
+        "Updated " + new Date().toLocaleTimeString("en-GB");
     }
-
-    lastCount = newCount;
-    allMessages = msgs;
-    renderMessages(msgs);
-    setStatus("ok");
-
-    const now = new Date();
-    document.getElementById("last-update").textContent =
-      "Last update: " + now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-
-  } catch (err) {
-    setStatus("error");
-    console.error(err);
+  } catch (e) {
+    setStatus("err");
   }
 
-  setTimeout(() => icon.classList.remove("spinning"), 500);
+  // Adaptive polling: 2s if recent activity, 6s if quiet
+  const delay = (Date.now() - lastTs < 30000) ? 2000 : 6000;
+  document.getElementById("refresh-info").textContent =
+    "Polling every " + (delay/1000) + "s";
+  pollTimer = setTimeout(poll, delay);
 }
 
-// Initial load
-loadMessages();
+// ─── Initial load ───
+async function init() {
+  try {
+    setStatus("loading");
+    const res  = await fetch(`${WORKER}/messages`);
+    const msgs = await res.json();
+    lastCount = msgs.length;
+    lastTs    = msgs.length ? new Date(msgs[0].date).getTime() : 0;
+    allMsgs   = msgs;
+    render(msgs);
+    setStatus("ok");
+    document.getElementById("last-update").textContent =
+      "Loaded " + new Date().toLocaleTimeString("en-GB");
+  } catch (e) {
+    setStatus("err");
+    render([]);
+  }
+  poll();
+}
 
-// Auto refresh every 10 seconds
-setInterval(loadMessages, 10000);
+init();
 </script>
 </body>
 </html>
