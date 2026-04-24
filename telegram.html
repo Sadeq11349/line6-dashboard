@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCL 6 - Group Messages</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --border: #30363d;
+    --accent: #2ea043;
+    --accent2: #1f6feb;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --card: #161b22;
+    --online: #3fb950;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #0088cc, #00c6ff);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .header-info h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .header-info .subtitle {
+    font-size: 12px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .online-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--online);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  .header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .msg-count {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text2);
+  }
+
+  .refresh-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--text2);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .refresh-btn:hover {
+    border-color: var(--accent2);
+    color: var(--text);
+    background: rgba(31, 111, 235, 0.1);
+  }
+
+  .refresh-icon {
+    transition: transform 0.5s;
+  }
+
+  .refresh-icon.spinning {
+    transform: rotate(360deg);
+  }
+
+  /* Status bar */
+  .status-bar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .status-left { display: flex; align-items: center; gap: 16px; }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--online);
+  }
+
+  .status-dot.error { background: #f85149; }
+  .status-dot.loading { background: #d29922; animation: pulse 1s infinite; }
+
+  /* Main content */
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* Messages container */
+  .messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* Message card */
+  .message-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    transition: all 0.2s;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .message-card:hover {
+    border-color: #444c56;
+    background: var(--bg3);
+  }
+
+  .message-card.new {
+    border-color: rgba(46, 160, 67, 0.4);
+    background: rgba(46, 160, 67, 0.05);
+  }
+
+  /* Avatar */
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  /* Message content */
+  .msg-content { flex: 1; min-width: 0; }
+
+  .msg-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+
+  .msg-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .msg-username {
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .msg-time {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  .msg-text {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text3);
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  .empty-desc {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* Loading state */
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .skeleton {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .skeleton-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg3);
+    flex-shrink: 0;
+  }
+
+  .skeleton-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+  .skeleton-line {
+    height: 10px;
+    border-radius: 4px;
+    background: var(--bg3);
+  }
+
+  /* New message toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--accent);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Back link */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text3);
+    font-size: 12px;
+    text-decoration: none;
+    padding: 0 24px 0;
+    margin-top: 12px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--text2); }
+
+  /* Separator */
+  .date-separator {
+    text-align: center;
+    margin: 12px 0;
+    position: relative;
+  }
+
+  .date-separator span {
+    background: var(--bg);
+    padding: 0 12px;
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+    z-index: 1;
+  }
+
+  .date-separator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+
+  @media (max-width: 600px) {
+    .header { padding: 12px 16px; }
+    .main { padding: 16px 12px; }
+    .status-bar { padding: 6px 16px; }
+    .msg-time { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-icon">✈️</div>
+  <div class="header-info">
+    <h1>PCL 6</h1>
+    <div class="subtitle">
+      <span class="online-dot"></span>
+      <span>Live Group Messages</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="msg-count" id="msg-count">0 messages</span>
+    <button class="refresh-btn" onclick="loadMessages(true)">
+      <span class="refresh-icon" id="refresh-icon">↻</span>
+      Refresh
+    </button>
+  </div>
+</div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="status-left">
+    <div class="status-indicator">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Connected</span>
+    </div>
+    <span id="last-update">—</span>
+  </div>
+  <span>Auto-refresh every 10s</span>
+</div>
+
+<!-- Back link -->
+<a href="index.html" class="back-link">← Back to Dashboard</a>
+
+<!-- Main -->
+<div class="main">
+  <div id="messages-wrapper">
+    <!-- Loading skeleton -->
+    <div class="loading-state" id="loading">
+      <div class="skeleton" style="animation-delay:0s">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-line" style="width:40%"></div>
+          <div class="skeleton-line" style="width:80%"></div>
+        </div>
+      </div>
+      <div class="skeleton" style="animation-delay:0.2s">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-line" style="width:30%"></div>
+          <div class="skeleton-line" style="width:65%"></div>
+        </div>
+      </div>
+      <div class="skeleton" style="animation-delay:0.4s">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-line" style="width:50%"></div>
+          <div class="skeleton-line" style="width:75%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="messages-container" id="messages-list" style="display:none"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">🔔 New message received</div>
+
+<script>
+const WORKER_URL = "https://telegram-bot.sadeq916.workers.dev/messages";
+
+const AVATAR_COLORS = [
+  "#2ea043","#1f6feb","#d29922","#f85149",
+  "#a371f7","#fd7e14","#20c997","#e83e8c"
+];
+
+let allMessages = [];
+let lastCount = 0;
+
+function getAvatarColor(name) {
+  let hash = 0;
+  for (let c of name) hash = (hash * 31 + c.charCodeAt(0)) & 0xffffffff;
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
+function getInitials(name) {
+  return name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+}
+
+function formatTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  const today = new Date();
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+
+  if (d.toDateString() === today.toDateString()) return "Today";
+  if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function setStatus(state) {
+  const dot  = document.getElementById("status-dot");
+  const text = document.getElementById("status-text");
+  dot.className = "status-dot" + (state === "error" ? " error" : state === "loading" ? " loading" : "");
+  text.textContent = state === "error" ? "Connection error" : state === "loading" ? "Loading..." : "Connected";
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function renderMessages(msgs) {
+  const list = document.getElementById("messages-list");
+  document.getElementById("loading").style.display = "none";
+  list.style.display = "flex";
+
+  if (!msgs || msgs.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">💬</div>
+        <div class="empty-title">No messages yet</div>
+        <div class="empty-desc">Messages sent to PCL 6 group will appear here automatically.</div>
+      </div>`;
+    document.getElementById("msg-count").textContent = "0 messages";
+    return;
+  }
+
+  document.getElementById("msg-count").textContent = msgs.length + " message" + (msgs.length !== 1 ? "s" : "");
+
+  let html = "";
+  let lastDate = "";
+
+  msgs.forEach((msg, idx) => {
+    const dateLabel = formatDate(msg.date);
+    if (dateLabel !== lastDate) {
+      html += `<div class="date-separator"><span>${dateLabel}</span></div>`;
+      lastDate = dateLabel;
+    }
+
+    const color    = getAvatarColor(msg.from);
+    const initials = getInitials(msg.from);
+    const isNew    = idx === 0 && msgs.length > lastCount && lastCount > 0;
+    const username = msg.username ? `@${msg.username}` : "";
+    const text     = msg.text ? msg.text.replace(/</g,"&lt;").replace(/>/g,"&gt;") : "<em style='opacity:0.4'>No text</em>";
+
+    html += `
+      <div class="message-card ${isNew ? "new" : ""}">
+        <div class="avatar" style="background:${color}">${initials}</div>
+        <div class="msg-content">
+          <div class="msg-header">
+            <span class="msg-name">${msg.from}</span>
+            ${username ? `<span class="msg-username">${username}</span>` : ""}
+            <span class="msg-time">${formatTime(msg.date)}</span>
+          </div>
+          <div class="msg-text">${text}</div>
+        </div>
+      </div>`;
+  });
+
+  list.innerHTML = html;
+}
+
+async function loadMessages(manual = false) {
+  const icon = document.getElementById("refresh-icon");
+  icon.classList.add("spinning");
+
+  if (!manual) setStatus("loading");
+
+  try {
+    const res  = await fetch(WORKER_URL);
+    const msgs = await res.json();
+
+    const newCount = msgs.length;
+
+    if (newCount > lastCount && lastCount > 0) {
+      showToast(`🔔 ${newCount - lastCount} new message${newCount - lastCount > 1 ? "s" : ""}`);
+    }
+
+    lastCount = newCount;
+    allMessages = msgs;
+    renderMessages(msgs);
+    setStatus("ok");
+
+    const now = new Date();
+    document.getElementById("last-update").textContent =
+      "Last update: " + now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+  } catch (err) {
+    setStatus("error");
+    console.error(err);
+  }
+
+  setTimeout(() => icon.classList.remove("spinning"), 500);
+}
+
+// Initial load
+loadMessages();
+
+// Auto refresh every 10 seconds
+setInterval(loadMessages, 10000);
+</script>
+</body>
+</html>
